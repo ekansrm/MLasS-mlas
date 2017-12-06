@@ -1,30 +1,40 @@
 package com.ekansrm.mlas.controller.root;
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
-import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
-import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.config.annotation.*;
+import org.springframework.web.socket.handler.PerConnectionWebSocketHandler;
 
 /**
  * 配置WebSocket
  */
 @Configuration
 //注解开启使用STOMP协议来传输基于代理(message broker)的消息,这时控制器支持使用@MessageMapping,就像使用@RequestMapping一样
-@EnableWebSocketMessageBroker
-public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
+@EnableAutoConfiguration
+@EnableWebSocket
+public class WebSocketConfig implements WebSocketConfigurer {
 
   @Override
-  public void registerStompEndpoints(StompEndpointRegistry registry) {//注册STOMP协议的节点(endpoint),并映射指定的url
-    //注册一个STOMP的endpoint,并指定使用SockJS协议
-    registry.addEndpoint("/endpointAric").withSockJS();
-
+  public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+    registry.addHandler(stockWebSocketHandler(), "/stocks").setAllowedOrigins("*").withSockJS();
   }
 
-  @Override
-  public void configureMessageBroker(MessageBrokerRegistry registry) {//配置消息代理(Message Broker)
-    //广播式应配置一个/topic消息代理
-    registry.enableSimpleBroker("/topic");
-
+  @Bean
+  public WebMvcConfigurer corsConfigurer() {
+    return new MvcConfig();
   }
+
+  @Bean
+  public WebSocketHandler stockWebSocketHandler() {
+    return new PerConnectionWebSocketHandler(StockWebSocketHandler.class);
+  }
+
+  @Bean
+  public BroadcastHandler createBroadcastHandler() {
+    return new BroadcastHandler();
+  }
+
 }
