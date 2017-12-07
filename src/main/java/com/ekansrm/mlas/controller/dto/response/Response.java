@@ -1,4 +1,4 @@
-package com.ekansrm.mlas.controller.root.dto.response;
+package com.ekansrm.mlas.controller.dto.response;
 
 import lombok.Data;
 
