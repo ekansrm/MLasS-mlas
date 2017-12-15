@@ -4,6 +4,6 @@ import org.apache.xmlrpc.XmlRpcException;
 
 public interface SentimentAnalysisService {
 
-  String predict(String text) throws XmlRpcException;
+  Double predict(String text) throws XmlRpcException;
 
 }

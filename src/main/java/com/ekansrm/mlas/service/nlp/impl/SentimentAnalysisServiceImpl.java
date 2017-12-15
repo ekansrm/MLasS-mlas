@@ -47,8 +47,8 @@ public class SentimentAnalysisServiceImpl implements SentimentAnalysisService {
   }
 
   @Override
-  public String predict(String text) throws XmlRpcException {
+  public Double predict(String text) throws XmlRpcException {
     Object[] params = new Object[]{text};
-    return (String) client.execute("predict", params);
+    return (Double) client.execute("predict", params);
   }
 }
